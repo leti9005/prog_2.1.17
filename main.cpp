@@ -32,7 +32,8 @@ int main() {
         }
     }
     in.close();
-    cout << "\n" <<"for letter - " << letter << ", count = " << counter;
+    ofstream outf(nameOfFile,ios::app);
+    outf << "\n" <<"for letter - " << letter << ", count = " << counter;
     return 0;
 }
 
