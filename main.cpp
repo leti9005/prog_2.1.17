@@ -3,47 +3,79 @@
 
 using namespace std;
 
-class Redaktor {
+
+const int MAX_SIZE = 2000;
+
+struct Sentence {
 public:
-    static int find(char del, string line, char letter) {
-        int counter = 0;//for check a count of sumbols
-        int result = 0;
-        if (line[0] == letter)
-            result++;
-        for (int i = 0; i < line.size(); i++) {
-            if (line[i] == del) {
-              counter++;
-                while (line[i + counter] == del) {
-                        counter++;
-                }
-                if(line[i + counter] == letter)
-                {
-                    result++;
-                    i+=counter;
-                }
-                    counter = 0;
-            }
+    char litera;
+    char text[MAX_SIZE]{};
+    int index = 0;
+    char marker = '%';
+    void addChar(const char &inputChar) {
+        if (inputChar == '\n') {
+            return;
         }
-        return result;
+
+        this->text[this->index] = inputChar;
+        this->index++;
+    }
+
+
+    bool isMarker(const char &inputChar) {
+        return inputChar == this->marker;
+    }
+
+    int countOfWord()
+    {
+        char alfa; // буква
+        int index = 0;
+        int counter = 0;
+        while (alfa != marker)
+        {
+            alfa = text[index];
+            if(alfa == litera)
+                if(text[index - 1] == ' ' || index == 0)counter++;
+
+            index++;
+        }
+        return counter;
+    }
+
+    void printer (string nameOfFile, int counter)
+    {
+        ofstream out;
+        out.open(nameOfFile, ios::app);
+        if (out.is_open()) {
+            out << "for letter " << litera << ", count = " << counter;
+        }
+        out.close();
     }
 };
 
+
 int main() {
-    string nameOfFile;
-    char letter = ' ';
     cout
             << "hello, this program can check how many word in this sentence have on first position have a certain letter\n"
                "if you want start you need write name of file, and on next line write letter\n";
-    cin >> nameOfFile;
-    cin >> letter;
-    string line;
-    ifstream in;
-    in.open(nameOfFile);
-    if (in.is_open()) {
-        getline(in, line);
-        in.close();
-        ofstream outf(nameOfFile, ios::app);
-        outf << "\n" << "for letter " << letter << ", count = " << Redaktor::find(' ', line, letter);
-        return 0;
+
+    string input;
+    string outName;
+    Sentence line;
+    cin >> input;
+    cin >> outName;
+    cin >> line.litera;
+    ifstream inputFile(input);
+    if (inputFile.is_open()) {
+        char inputChar;
+
+        while (inputFile >> noskipws >> inputChar) {
+            line.addChar(inputChar);
+        }
+
+        line.addChar('%');
+        inputFile.close();
     }
+    int result = line.countOfWord();
+    line.printer(outName,result);
 }
